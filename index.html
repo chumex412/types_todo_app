@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="./src/css/base.css">
+  <link rel="stylesheet" href="./src/css/main.css">
+
+  <title>Document</title>
+</head>
+<body>
+  <header class="todo-header">
+    <div class="header-bg">
+      <picture>
+        <source media="(max-width: 599px)" srcset="./src/images/bg-mobile-light.jpg">
+        <source media="(min-width: 600px)" srcset="./src/images/bg-desktop-light.jpg">
+        <img src="./src/images/bg-mobile-light.jpg" alt="">
+      </picture>
+    </div>
+    <h1>Todo</h1>
+    <button class="mode-toggler">
+      <img src="./src/images/icon-sun.svg" alt="A sun to show a white backround">
+    </button>
+  </header>
+  <main class="todo-main-wrapper">
+    <form action="">
+      <div class="input-group">
+        <label for="todo-form-check">
+          <input type="checkbox" name="" id="todo-form-check">
+        </label>
+        <label for="todo-form-input">
+          <input type="text" id="todo-form-input">
+        </label>
+      </div>
+    </form>
+    <section class="todo-wrapper">
+      <ul class="todo-list">
+        <li class="todo-item">
+          <input type="checkbox" name="" id="">
+          <p></p>
+          <button class="delete-todo-btn">&#10006;</button>
+        </li>
+      </ul>
+    </section>
+    <div class="attribution">
+      Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
+      Coded by <a href="#">Your Name Here</a>.
+    </div>
+  </main>
+</body>
+</html>

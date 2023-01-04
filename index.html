@@ -5,27 +5,29 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="./src/css/base.css">
-  <link rel="stylesheet" href="./src/css/main.css">
+  <link rel="stylesheet" type="text/css" href="./src/css/base.css">
+  <link rel="stylesheet" type="text/css" href="./src/css/main.css">
 
-  <title>Document</title>
+  <title>Todo</title>
 </head>
 <body>
   <header class="todo-header">
     <div class="header-bg">
       <picture>
-        <source media="(max-width: 599px)" srcset="./src/images/bg-mobile-light.jpg">
-        <source media="(min-width: 600px)" srcset="./src/images/bg-desktop-light.jpg">
+        <source media="(max-width: 599px)" srcset="./src/images/bg-mobile-light.jpg" height="200px">
+        <source media="(min-width: 600px)" srcset="./src/images/bg-desktop-light.jpg" height="300px">
         <img src="./src/images/bg-mobile-light.jpg" alt="">
       </picture>
     </div>
-    <h1>Todo</h1>
-    <button class="mode-toggler">
-      <img src="./src/images/icon-sun.svg" alt="A sun to show a white backround">
-    </button>
+    <div class="header-content">
+      <h1>Todo</h1>
+      <button class="mode-toggler">
+        <img src="./src/images/icon-moon.svg" alt="A moon to show a dark backround">
+      </button>
+    </div>
   </header>
   <main class="todo-main-wrapper">
-    <form action="">
+    <form action="" class="add-todo-form">
       <div class="input-group">
         <label for="todo-form-check">
           <input type="checkbox" name="" id="todo-form-check">
@@ -38,16 +40,32 @@
     <section class="todo-wrapper">
       <ul class="todo-list">
         <li class="todo-item">
-          <input type="checkbox" name="" id="">
-          <p></p>
+          <input type="checkbox" name="" id="" />
+          <p>Do bla</p>
+          <button class="delete-todo-btn">&#10006;</button>
+        </li>
+        <li class="todo-item">
+          <input type="checkbox" name="" id="" />
+          <p>Clean blabla</p>
           <button class="delete-todo-btn">&#10006;</button>
         </li>
       </ul>
+      <section class="todo-bottom">
+        <p>2 items left</p>
+        <button class="clear-completed">Clear Completed</button>
+      </section>
     </section>
-    <div class="attribution">
+    <section class="todo-filter">
+      <button data-name="All">All</button>
+      <button data-name="Active">Active</button>
+      <button data-name="Completed">Completed</button>
+    </section>
+    <!--<div class="attribution">
       Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
       Coded by <a href="#">Your Name Here</a>.
-    </div>
+    </div>-->
   </main>
+
+  <script src="./build/app.js"></script>
 </body>
 </html>

@@ -150,7 +150,7 @@
   grid-column-gap: 1rem;
   align-items: center;
   padding: 0.25rem 1rem;
-  border-radius: 8px;
+  border-radius: 4px;
 }
 
 .todo-main-wrapper .input-group input[type="text"] {
@@ -206,8 +206,9 @@
 }
 
 .todo-wrapper {
-  border-radius: 8px;
+  border-radius: 4px;
   margin-top: 1.5rem;
+  overflow: hidden;
 }
 
 .todo-item {
@@ -266,7 +267,7 @@
   align-items: center;
   margin-top: 2rem;
   background-color: #ffffff;
-  border-radius: 8px;
+  border-radius: 4px;
   box-shadow: 0 5px 10px rgba(var(--light-theme-5), 0.2);
 }
 
@@ -288,7 +289,7 @@
   border: none;
 }
 
-.filter-btn.current {
+button.filter-btn.active {
   color: var(--primary-color);
 } 
 

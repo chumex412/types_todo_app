@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var target = e.target;
         if (target.classList.contains('filter-btn')) {
             var name_1 = target.dataset.name;
-            filterTodo(name_1);
+            filterTodo(target, name_1);
         }
     });
 });
@@ -87,11 +87,18 @@ function addTodo(e) {
     e.preventDefault();
     var todoName = document.querySelector('#todo-form-input');
     var todoChecked = document.querySelector('#todo-form-check');
+    if (!todoName.value) {
+        return;
+    }
     var todoItem = {
         id: generateRandomId(),
         name: todoName.value,
         completed: todoChecked.checked
     };
+    todoName.value = "";
+    if (todoChecked.checked) {
+        todoChecked.checked = false;
+    }
     todoList.push(todoItem);
     renderTodoList(todoList);
 }
@@ -101,7 +108,45 @@ function renderTodoList(list) {
     });
     var todoListElem = document.querySelector('.todo-list');
     todoListElem.innerHTML = output.join("");
-    itemsLeftWatch(list);
+    if (todoList.length) {
+        itemsLeftWatch(list);
+    }
+    handleTaskComplete();
+}
+function deleteTodoItem(id) {
+    todoList = todoList.filter(function (item) { return item.id !== id; });
+    renderTodoList(todoList);
+}
+function clearCompleted() {
+    var completedTodo = todoList.filter(function (item) { return item.completed; });
+    console.log(todoList);
+    todoList = todoList.filter(function (item) { return !item.completed; });
+    if (completedTodo.length) {
+        renderTodoList(todoList);
+    }
+}
+function filterTodo(target, filter) {
+    var filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(function (btn) {
+        btn.classList.remove('active');
+    });
+    target.classList.add('active');
+    var newTodoList = todoList.filter(function (item) {
+        if (filter === 'Active') {
+            return !item.completed;
+        }
+        else if (filter === 'Completed') {
+            return item.completed;
+        }
+        else {
+            return item;
+        }
+    });
+    if (todoList.length) {
+        renderTodoList(newTodoList);
+    }
+}
+function handleTaskComplete() {
     var todoItemCheckboxes = document.querySelectorAll('.todo-item input[type="checkbox"]');
     todoItemCheckboxes.forEach(function (todoItem) {
         todoItem.addEventListener('change', function (e) {
@@ -122,36 +167,15 @@ function renderTodoList(list) {
                 }
                 return item;
             });
+            console.log(todoList);
             itemsLeftWatch(todoList);
         });
     });
 }
-function deleteTodoItem(id) {
-    todoList = todoList.filter(function (item) { return item.id !== id; });
-    renderTodoList(todoList);
-}
-function clearCompleted() {
-    todoList = todoList.filter(function (item) { return !item.completed; });
-    renderTodoList(todoList);
-}
-function filterTodo(filter) {
-    var newTodoList = todoList.filter(function (item) {
-        if (filter === 'Active') {
-            return !item.completed;
-        }
-        else if (filter === 'Completed') {
-            return item.completed;
-        }
-        else {
-            return item;
-        }
-    });
-    renderTodoList(newTodoList);
-}
 function itemsLeftWatch(list) {
     var remainingTaskElem = document.querySelector('.todo-bottom > p');
     var count = list.filter(function (item) { return !item.completed; }).length;
-    var remainingTaskText = "\n    ".concat(count === 0 ? 'No tasks left or added' : count === 1 ? count + " item left" : count + " items left", "\n  ");
+    var remainingTaskText = "\n    ".concat(count === 0 ? 'No items' : count === 1 ? count + " item left" : count + " items left", "\n  ");
     remainingTaskElem.innerHTML = remainingTaskText;
 }
 function generateRandomId() {

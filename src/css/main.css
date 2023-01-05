@@ -109,7 +109,7 @@
   background-color: white;
   border-radius: 8px;
   margin-top: 1.5rem;
-  box-shadow: 0 2.5px 5px rgba(var(--light-gray-5), 0.2);
+  box-shadow: 0 5px 10px rgba(var(--light-gray-5), 0.2);
 }
 
 .todo-item {
@@ -122,7 +122,7 @@
   font-weight: 400;
   font-size: var(--main-text);
   line-height: var(--sf-line-height);
-  border-top: 1px solid var(--light-gray-3);
+  border-bottom: 1px solid var(--light-gray-3);
   padding: 1rem;
   font-size: var(--main-text);
   line-height: var(--sf-line-height);
@@ -130,7 +130,7 @@
 }
 
 .todo-item:first-child {
-  border-top: none;
+  _border-top: none;
 }
 
 .delete-todo-btn {
@@ -142,7 +142,6 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  border-top: 1px solid var(--light-gray-3);
 }
 
 .todo-bottom,
@@ -152,7 +151,8 @@
   line-height: var(--sf-line-height);
 }
 
-.todo-filter {
+.ld-todo-filter,
+.sd-todo-filter {
   padding: 1rem;
   display: flex;
   justify-content: center;
@@ -160,10 +160,18 @@
   margin-top: 2rem;
   background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 2.5px 5px rgba(var(--light-gray-5), 0.2);
+  box-shadow: 0 5px 10px rgba(var(--light-gray-5), 0.2);
 }
 
-.todo-filter button {
+.ld-todo-filter {
+  display: none;
+  margin-top: 0;
+  box-shadow: none;
+  padding: 0 0.5rem;
+}
+
+.ld-todo-filter button,
+.sd-todo-filter button {
   margin-right: 0.625rem;
   font-size: var(--main-text);
   line-height: var(--sf-line-height);
@@ -173,7 +181,8 @@
   border: none;
 }
 
-.todo-filter button:last-child {
+.ld-todo-filter button:last-child,
+.sd-todo-filter button:last-child {
   margin-right: 0;
 }
 
@@ -187,7 +196,11 @@
     max-width: 650px;
   }
 
-  .todo-filter {
+  .ld-todo-filter {
+    display: flex;
+  }
+
+  .sd-todo-filter {
     display: none;
   }
 }

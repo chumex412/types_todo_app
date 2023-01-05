@@ -11,54 +11,56 @@
   <title>Todo</title>
 </head>
 <body>
-  <header class="todo-header">
-    <div class="header-bg">
-      <picture>
-        <source media="(max-width: 599px)" srcset="./src/images/bg-mobile-light.jpg" height="200px">
-        <source media="(min-width: 600px)" srcset="./src/images/bg-desktop-light.jpg" height="300px">
-        <img src="./src/images/bg-mobile-light.jpg" alt="">
-      </picture>
-    </div>
-    <div class="header-content">
-      <h1>Todo</h1>
-      <button class="mode-toggler">
-        <img src="./src/images/icon-moon.svg" alt="A moon to show a dark backround">
-      </button>
-    </div>
-  </header>
-  <main class="todo-main-wrapper">
-    <form action="" class="add-todo-form">
-      <div class="input-group">
-        <label for="todo-form-check">
-          <input type="checkbox" name="" id="todo-form-check">
-        </label>
-        <label for="todo-form-input">
-          <input type="text" id="todo-form-input">
-        </label>
+  <div id="mode" class="light-mode">
+    <header class="todo-header">
+      <div class="header-bg">
+        <picture>
+          <source media="(max-width: 599px)" data-dark="bg-mobile-dark.jpg" data-light="bg-mobile-light.jpg" srcset="./src/images/bg-mobile-light.jpg" height="200px">
+          <source data-dark="bg-desktop-dark.jpg" data-light="bg-desktop-light.jpg" media="(min-width: 600px)" srcset="./src/images/bg-desktop-light.jpg" height="300px">
+          <img src="./src/images/bg-mobile-light.jpg" alt="">
+        </picture>
       </div>
-    </form>
-    <section class="todo-wrapper">
-      <ul class="todo-list"></ul>
-      <section class="todo-bottom">
-        <p>No items</p>
-        <div class="ld-todo-filter">
-          <button data-name="All" class="filter-btn">All</button>
-          <button data-name="Active" class="filter-btn">Active</button>
-          <button data-name="Completed" class="filter-btn">Completed</button>
+      <div class="header-content">
+        <h1>Todo</h1>
+        <button class="mode-toggler" data-dark="icon-moon.svg" data-light="icon-sun.svg">
+          <img src="./src/images/icon-moon.svg" alt="A moon to show a dark backround">
+        </button>
+      </div>
+    </header>
+    <main class="todo-main-wrapper">
+      <form action="" class="add-todo-form">
+        <div class="input-group">
+          <label for="todo-form-check">
+            <input type="checkbox" name="" id="todo-form-check">
+          </label>
+          <label for="todo-form-input">
+            <input type="text" id="todo-form-input">
+          </label>
         </div>
-        <button class="clear-completed">Clear Completed</button>
+      </form>
+      <section class="todo-wrapper">
+        <ul class="todo-list"></ul>
+        <section class="todo-bottom">
+          <p>No items</p>
+          <div class="ld-todo-filter">
+            <button data-name="All" class="filter-btn">All</button>
+            <button data-name="Active" class="filter-btn">Active</button>
+            <button data-name="Completed" class="filter-btn">Completed</button>
+          </div>
+          <button class="clear-completed">Clear Completed</button>
+        </section>
       </section>
-    </section>
-    <section class="sd-todo-filter">
-      <button data-name="All" class="filter-btn">All</button>
-      <button data-name="Active" class="filter-btn">Active</button>
-      <button data-name="Completed" class="filter-btn">Completed</button>
-    </section>
-    <!--<div class="attribution">
-      Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
-      Coded by <a href="#">Your Name Here</a>.
-    </div>-->
-  </main>
+      <section class="sd-todo-filter">
+        <button data-name="All" class="filter-btn current">All</button>
+        <button data-name="Active" class="filter-btn">Active</button>
+        <button data-name="Completed" class="filter-btn">Completed</button>
+      </section>
+      <!--<div class="attribution">
+        Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
+        Coded by <a href="#">Your Name Here</a>.
+      </div>-->
+    </main>
+  </div>
 
   <script src="./build/app.js"></script>
 </body>

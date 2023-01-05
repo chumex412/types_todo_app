@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
             deleteTodoItem(id);
         }
     });
-    modeToggleBtn.addEventListener('click', togglerMode);
+    modeToggleBtn.addEventListener('click', toggleMode);
     mainWrapper.addEventListener('click', function (e) {
         var target = e.target;
         if (target.classList.contains('filter-btn')) {
@@ -34,7 +34,54 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-function togglerMode() {
+var changeImgPath = function (nodes, currentMode) {
+    nodes.forEach(function (element) {
+        var elemSrcSet = getRelativePath(element, 'srcset');
+        var mediaAttrVal = element.getAttribute('media');
+        if (mediaAttrVal === '(max-width: 599px)') {
+            if (currentMode === 'light') {
+                element.setAttribute('srcset', elemSrcSet + element.dataset.dark);
+            }
+            else {
+                element.setAttribute('srcset', elemSrcSet + element.dataset.light);
+            }
+        }
+        if (mediaAttrVal === '(min-width: 600px)') {
+            if (currentMode === 'light') {
+                element.setAttribute('srcset', elemSrcSet + element.dataset.dark);
+            }
+            else {
+                element.setAttribute('srcset', elemSrcSet + element.dataset.light);
+            }
+        }
+    });
+};
+var toggleDarkAndLightMode = function (toggler, current) {
+    var modeDiv = document.querySelector('#mode');
+    var headerBgs = document.querySelectorAll('.header-bg > picture > source');
+    var slicedPath = getRelativePath(toggler.firstElementChild, 'src');
+    if (current === 'light') {
+        toggler.firstElementChild.setAttribute('src', slicedPath + toggler.dataset.light);
+        modeDiv.classList.remove('light-mode');
+        modeDiv.classList.add('dark-mode');
+        changeImgPath(headerBgs, 'light');
+    }
+    if (current === 'dark') {
+        toggler.firstElementChild.setAttribute('src', slicedPath + toggler.dataset.dark);
+        modeDiv.classList.remove('dark-mode');
+        modeDiv.classList.add('light-mode');
+        changeImgPath(headerBgs, 'dark');
+    }
+};
+function toggleMode(e) {
+    var target = e.currentTarget;
+    var modeDiv = document.querySelector('#mode');
+    if (modeDiv.classList.contains('light-mode')) {
+        toggleDarkAndLightMode(target, 'light');
+    }
+    else {
+        toggleDarkAndLightMode(target, 'dark');
+    }
 }
 function addTodo(e) {
     e.preventDefault();
@@ -50,7 +97,7 @@ function addTodo(e) {
 }
 function renderTodoList(list) {
     var output = list.map(function (item) {
-        return "\n      <li class=\"todo-item\">\n        <input type=\"checkbox\" ".concat(item.completed ? 'checked' : null, " name=\"").concat(item.name, "\" data-id=\"").concat(item.id, "\" />\n        <p style=\"text-decoration: ").concat(item.completed ? "line-through" : "none", ";\">").concat(item.name, "</p>\n        <button data-id=\"").concat(item.id, "\" class=\"delete-todo-btn\">&#10006;</button>\n      </li>\n    ");
+        return "\n      <li class=\"todo-item\">\n        <input type=\"checkbox\" ".concat(item.completed ? 'checked' : null, " name=\"").concat(item.name, "\" data-id=\"").concat(item.id, "\" />\n        <p style=\"text-decoration: ").concat(item.completed ? "line-through" : "none", "; color: ").concat(item.completed ? "var(--dark-theme-5)" : "", "\">").concat(item.name, "</p>\n        <button data-id=\"").concat(item.id, "\" class=\"delete-todo-btn\">&#10006;</button>\n      </li>\n    ");
     });
     var todoListElem = document.querySelector('.todo-list');
     todoListElem.innerHTML = output.join("");
@@ -64,6 +111,7 @@ function renderTodoList(list) {
             var checked = target.checked;
             if (checked) {
                 todoItemText.style.textDecoration = 'line-through';
+                todoItemText.style.color = 'var(--dark-theme-5)';
             }
             else {
                 todoItemText.style.textDecoration = 'none';
@@ -108,5 +156,9 @@ function itemsLeftWatch(list) {
 }
 function generateRandomId() {
     return Date.now().toString(20) + Math.random().toString(20).substring(2);
+}
+function getRelativePath(selector, attribute) {
+    var originalPath = selector.getAttribute(attribute);
+    return originalPath.slice(0, originalPath.lastIndexOf('/') + 1);
 }
 //# sourceMappingURL=app.js.map

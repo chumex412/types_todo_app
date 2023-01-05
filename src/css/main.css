@@ -1,3 +1,101 @@
+/* Mode toggle */
+
+/* Light mode */
+
+.light-mode .todo-main-wrapper .input-group {
+  background-color: var(--light-theme-1);
+  color: var(--dark-theme-1);
+}
+
+.light-mode #todo-form-check,
+.light-mode .todo-item input[type="checkbox"] {
+  background-color: var(--light-theme-1);
+  border: 1px solid var(--light-theme-4);
+}
+
+.light-mode .todo-main-wrapper .input-group input[type="text"] {
+  color: var(--dark-theme-1);
+}
+
+.light-mode .delete-todo-btn {
+  color: var(--light-theme-3);
+}
+
+.light-mode .todo-wrapper,
+.light-mode .sd-todo-filter {
+  background-color: var(--light-theme-1);
+  color: var(--dark-theme-1);
+  box-shadow: 0 5px 10px rgba(var(--light-theme-5), 0.2);
+}
+
+.light-mode .ld-todo-filter {
+  background-color: var(--light-theme-1);
+  color: var(--dark-theme-1);
+}
+
+.light-mode .todo-bottom,
+.light-mode .todo-bottom button,
+.light-mode .ld-todo-filter,
+.light-mode .sd-todo-filter {
+  color: var(--light-theme-4);
+}
+
+.light-mode .sd-todo-filter button:hover,
+.light-mode .todo-bottom button:hover {
+  color: rgb(var(--light-theme-5));
+}
+
+
+/* Dark mode */
+
+.dark-mode .todo-main-wrapper .input-group {
+  background-color: var(--dark-theme-2);
+  color: var(--dark-theme-3);
+}
+
+.dark-mode #todo-form-check,
+.dark-mode .todo-item input[type="checkbox"] {
+  background-color: var(--dark-theme-2);
+  border: 1px solid var(--dark-theme-5);
+}
+
+.dark-mode .todo-main-wrapper .input-group input[type="text"] {
+  color: var(--light-theme-1);
+}
+
+.dark-mode .todo-main-wrapper .input-group input[type="text"]:focus {
+  background-color: var(--dark-theme-2);
+}
+
+.dark-mode .todo-wrapper,
+.dark-mode .sd-todo-filter {
+  background-color: var(--dark-theme-2);
+  color: var(--dark-theme-5);
+  box-shadow: 0 5px 10px rgba(var(--dark-theme-6), 0.2);
+}
+
+.dark-mode .todo-item {
+  color: var(--light-theme-1);
+}
+
+.dark-mode .delete-todo-btn {
+  color: var(--dark-theme-5);
+}
+
+.dark-mode .todo-bottom,
+.dark-mode .todo-bottom button,
+.dark-mode .ld-todo-filter {
+  background-color: var(--dark-theme-2);
+  color: var(--dark-theme-5);
+}
+
+.dark-mode .sd-todo-filter button:hover,
+.dark-mode .todo-bottom button:hover {
+  color: var(--dark-theme-3);
+}
+
+/* End of mode toggle */
+
 .todo-header {
   position: relative;
   padding: 2rem 0;
@@ -8,8 +106,10 @@
 .header-content {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   padding: 0 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .header-bg {
@@ -18,7 +118,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
 }
 
 .header-bg picture {
@@ -50,7 +149,6 @@
   column-gap: 1rem;
   grid-column-gap: 1rem;
   align-items: center;
-  background-color: white;
   padding: 0.25rem 1rem;
   border-radius: 8px;
 }
@@ -60,15 +158,15 @@
   padding: 0.625rem 0;
   width: 100%;
   outline: none;
+  background-color: transparent;
+  font-size: var(--main-text);
+  line-height: var(--sf-line-height);
 }
 
-.todo-main-wrapper .input-group input[type="checkbox"] {
-}
-
-#todo-form-check {
+#todo-form-check,
+.todo-item input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
-  background-color: #ffffff;
   margin: 0;
   font-size: inherit;
   border-radius: 50%;
@@ -81,10 +179,11 @@
   overflow: hidden;
 }
 
-#todo-form-check::before {
+#todo-form-check::before,
+.todo-item input[type="checkbox"]::before {
   content: url(../images/icon-check.svg);
   height: 1.25em;
-  width: 125em;
+  width: 1.25em;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,20 +195,19 @@
   transition: transform 0.2s ease-out;
   -moz-transition: transform 0.2s ease-out;
   -webkit-transition: transform 0.2s ease-out;
-  box-shadow: inset 1.25em 1.25em var(--light-gray-4);
+  background: linear-gradient(var(--check-mark-bg));
 }
 
-#todo-form-check:checked::before {
+#todo-form-check:checked::before,
+.todo-item input[type="checkbox"]:checked::before {
   transform: scale(1);
   -moz-transform: scale(1);
   -webkit-transform: scale(1);
 }
 
 .todo-wrapper {
-  background-color: white;
   border-radius: 8px;
   margin-top: 1.5rem;
-  box-shadow: 0 5px 10px rgba(var(--light-gray-5), 0.2);
 }
 
 .todo-item {
@@ -117,24 +215,33 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   -ms-grid-columns: auto 1fr auto;
+  align-items: center;
   column-gap: 0.625rem;
   grid-column-gap: 0.625rem;
   font-weight: 400;
   font-size: var(--main-text);
   line-height: var(--sf-line-height);
-  border-bottom: 1px solid var(--light-gray-3);
+  border-bottom: 1px solid var(--light-theme-3);
   padding: 1rem;
   font-size: var(--main-text);
   line-height: var(--sf-line-height);
-  color: var(--dark-gray-1);
-}
-
-.todo-item:first-child {
-  _border-top: none;
+  color: var(--dark-theme-1);
 }
 
 .delete-todo-btn {
-  color: var(--light-gray-3);
+  font-size: var(--intro-text);
+  line-height: var(--sf-line-height);
+  font-weight: 400;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out;
+  -moz-transition: opacity 0.3s ease-in-out;
+  -webkit-transition: opacity 0.3s ease-in-out;
+}
+
+.todo-item:hover > .delete-todo-btn {
+  opacity: 1;
+  visibility: visible;
 }
 
 .todo-bottom {
@@ -146,7 +253,7 @@
 
 .todo-bottom,
 .todo-bottom button {
-  color: var(--light-gray-4);
+  color: var(--light-theme-4);
   font-size: var(--main-text);
   line-height: var(--sf-line-height);
 }
@@ -160,7 +267,7 @@
   margin-top: 2rem;
   background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 5px 10px rgba(var(--light-gray-5), 0.2);
+  box-shadow: 0 5px 10px rgba(var(--light-theme-5), 0.2);
 }
 
 .ld-todo-filter {
@@ -176,10 +283,14 @@
   font-size: var(--main-text);
   line-height: var(--sf-line-height);
   font-weight: 700;
-  border-top: 1px solid var(--light-gray-3);
-  color: var(--light-gray-4);
+  border-top: 1px solid var(--light-theme-3);
+  color: var(--light-theme-4);
   border: none;
 }
+
+.filter-btn.current {
+  color: var(--primary-color);
+} 
 
 .ld-todo-filter button:last-child,
 .sd-todo-filter button:last-child {
@@ -194,6 +305,12 @@
   .header-content,
   .todo-main-wrapper {
     max-width: 650px;
+  }
+
+  .todo-main-wrapper {
+    transform: translateY(-105px);
+    -moz-transform: translateY(-105px);
+    -webkit-transform: translateY(-105px);
   }
 
   .ld-todo-filter {

@@ -241,19 +241,6 @@
   background: linear-gradient(var(--check-mark-bg));
 }
 
-/*.todo-item input[type="checkbox"]::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 0;
-  margin: -1px;
-  border-radius: inherit;
-  background-image: linear-gradient(var(--check-mark-bg));
-}*/
-
 .todo-item input[type="checkbox"]:hover {
   border-color: var(--color-stop-2);
 }

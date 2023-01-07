@@ -215,7 +215,10 @@
   display: grid;
   place-content: center;
   position: relative;
-  overflow: hidden;
+  _overflow: hidden;
+  transition: border-color 0.2s ease-out;
+  -moz-transition: border-color 0.2s ease-out;
+  -webkit-transition: border-color 0.2s ease-out;
 }
 
 #todo-form-check::before,
@@ -236,6 +239,23 @@
   -moz-transition: transform 0.2s ease-out;
   -webkit-transition: transform 0.2s ease-out;
   background: linear-gradient(var(--check-mark-bg));
+}
+
+/*.todo-item input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 0;
+  margin: -1px;
+  border-radius: inherit;
+  background-image: linear-gradient(var(--check-mark-bg));
+}*/
+
+.todo-item input[type="checkbox"]:hover {
+  border-color: var(--color-stop-2);
 }
 
 #todo-form-check:checked::before,

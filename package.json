@@ -16,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/chumex412/types_todo_app/issues"
   },
-  "homepage": "https://github.com/chumex412/types_todo_app#readme",
+  "homepage": "https://chumex412.github.io/types_todo_app",
   "devDependencies": {
     "husky": "^8.0.2",
     "lint-staged": "^13.1.0",

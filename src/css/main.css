@@ -28,6 +28,23 @@
   box-shadow: 0 5px 10px rgba(var(--light-theme-5), 0.2);
 }
 
+.light-mode .todo-item {
+  background-color: var(--light-theme-1);
+  color: var(--dark-theme-1);
+}
+
+.light-mode .checked {
+  color: var(--light-theme-4);
+}
+
+.light-mode .todo-item.dragover {
+  border: 1px dashed rgb(var(--light-theme-5));
+}
+
+.light-mode .todo-item.dragstart {
+  border: 1px solid rgb(var(--light-theme-5));
+}
+
 .light-mode .ld-todo-filter {
   background-color: var(--light-theme-1);
   color: var(--dark-theme-1);
@@ -76,6 +93,19 @@
 
 .dark-mode .todo-item {
   color: var(--light-theme-1);
+  background-color: var(--dark-theme-2);
+}
+
+.dark-mode .checked {
+  color: var(--dark-theme-5);
+}
+
+.dark-mode .todo-item.dragover {
+  border: 1px dashed var(--dark-theme-3);
+}
+
+.dark-mode .todo-item.dragstart {
+  border: 1px solid var(--dark-theme-3);
 }
 
 .dark-mode .delete-todo-btn {
@@ -182,6 +212,7 @@
 #todo-form-check::before,
 .todo-item input[type="checkbox"]::before {
   content: url(../images/icon-check.svg);
+  display: block;
   height: 1.25em;
   width: 1.25em;
   display: flex;
@@ -227,6 +258,20 @@
   font-size: var(--main-text);
   line-height: var(--sf-line-height);
   color: var(--dark-theme-1);
+  transition-property: border, opacity;
+  -moz-transition-property: border, opacity;
+  -webkit-transition-property: border, opacity;
+  transition: 0.25s ease-in-out;
+  -moz-transition: 0.25s ease-in-out;
+  -webkit-transition: 0.25s ease-in-out;
+}
+
+.checked {
+  text-decoration: line-through;
+}
+
+.todo-item.dragstart {
+  opacity: 0.5;
 }
 
 .delete-todo-btn {

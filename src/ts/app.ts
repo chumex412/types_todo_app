@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function(): void {
   const todoListElem = document.querySelector('.todo-list') as HTMLElement;
   const clearCompletedBtn = document.querySelector('.clear-completed') as HTMLButtonElement;
   const modeToggleBtn = document.querySelector('.mode-toggler') as HTMLButtonElement;
+
   let dragSrcElem: HTMLUListElement;
   
   // Events
@@ -227,6 +228,8 @@ function addTodo(e: Event): void {
 
 // Renders todo items on the DOM
 function renderTodoList(list: TodoArray): void {
+  const footer = document.querySelector('footer') as HTMLElement;
+
   const output: string[] = list.map((item: TodoObject) => {
 
     return `
@@ -248,7 +251,10 @@ function renderTodoList(list: TodoArray): void {
   todoListElem.innerHTML = output.join("");
 
   if(todoList.length) {
-    itemsLeftWatch(list)
+    itemsLeftWatch(list);
+    footer.classList.add('show');
+  } else {
+    footer.classList.remove('show');
   }
 
   handleTaskComplete()
@@ -272,6 +278,7 @@ function clearCompleted(): void {
 
 function filterTodo(target: HTMLButtonElement, filter: string): void {
   const filterBtns = <NodeList> document.querySelectorAll('.filter-btn');
+  const footer = <HTMLElement> document.querySelector('footer');
 
   filterBtns.forEach((btn: HTMLElement) => {
     btn.classList.remove('active')
@@ -288,6 +295,12 @@ function filterTodo(target: HTMLButtonElement, filter: string): void {
       return item
     }
   })
+
+  if(newTodoList.length > 1) {
+    footer.classList.add('show');
+  } else {
+    footer.classList.remove('show');
+  }
 
   if(todoList.length) {
     renderTodoList(newTodoList)

@@ -155,6 +155,7 @@ function addTodo(e) {
     renderTodoList(todoList);
 }
 function renderTodoList(list) {
+    const footer = document.querySelector('footer');
     const output = list.map((item) => {
         return `
       <li id="item-${item.id}" class="todo-item" draggable="true">
@@ -173,6 +174,10 @@ function renderTodoList(list) {
     todoListElem.innerHTML = output.join("");
     if (todoList.length) {
         itemsLeftWatch(list);
+        footer.classList.add('show');
+    }
+    else {
+        footer.classList.remove('show');
     }
     handleTaskComplete();
 }
@@ -189,6 +194,7 @@ function clearCompleted() {
 }
 function filterTodo(target, filter) {
     const filterBtns = document.querySelectorAll('.filter-btn');
+    const footer = document.querySelector('footer');
     filterBtns.forEach((btn) => {
         btn.classList.remove('active');
     });
@@ -204,6 +210,12 @@ function filterTodo(target, filter) {
             return item;
         }
     });
+    if (newTodoList.length > 1) {
+        footer.classList.add('show');
+    }
+    else {
+        footer.classList.remove('show');
+    }
     if (todoList.length) {
         renderTodoList(newTodoList);
     }

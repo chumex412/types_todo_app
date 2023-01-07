@@ -1,43 +1,95 @@
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-var todoList = [];
+let todoList = [];
 document.addEventListener("DOMContentLoaded", function () {
-    var mainWrapper = document.querySelector('.todo-main-wrapper');
-    var todoForm = document.querySelector(".add-todo-form");
-    var todoListElem = document.querySelector('.todo-list');
-    var clearCompletedBtn = document.querySelector('.clear-completed');
-    var modeToggleBtn = document.querySelector('.mode-toggler');
+    const mainWrapper = document.querySelector('.todo-main-wrapper');
+    const todoForm = document.querySelector(".add-todo-form");
+    const todoListElem = document.querySelector('.todo-list');
+    const clearCompletedBtn = document.querySelector('.clear-completed');
+    const modeToggleBtn = document.querySelector('.mode-toggler');
+    let dragSrcElem;
+    const eventTypeArr = ['dragstart', 'dragenter', 'dragleave', 'dragover', 'drop', 'dragend'];
     todoForm.addEventListener('submit', addTodo);
     clearCompletedBtn.addEventListener('click', clearCompleted);
     todoListElem.addEventListener('click', function (e) {
-        var target = e.target;
+        const target = e.target;
         if (target.classList.contains("delete-todo-btn")) {
-            var id = target.dataset.id;
+            const id = target.dataset.id;
             deleteTodoItem(id);
         }
     });
     modeToggleBtn.addEventListener('click', toggleMode);
     mainWrapper.addEventListener('click', function (e) {
-        var target = e.target;
+        const target = e.target;
         if (target.classList.contains('filter-btn')) {
-            var name_1 = target.dataset.name;
-            filterTodo(target, name_1);
+            const name = target.dataset.name;
+            filterTodo(target, name);
         }
     });
+    eventTypeArr.forEach(eventType => {
+        todoListElem.addEventListener(eventType, function (evt) {
+            const target = evt.target;
+            const li = target.closest('.todo-item');
+            if (!li)
+                return;
+            if (!todoListElem.contains(li))
+                return;
+            if (eventType === 'dragstart') {
+                dragSrcElem = li;
+                evt.dataTransfer.effectAllowed = 'move';
+                evt.dataTransfer.setData('text/plain', li.id);
+                setTimeout(() => {
+                    li.classList.add('dragstart');
+                }, 0);
+            }
+            if (eventType === 'dragenter' || eventType === 'dragover') {
+                evt.preventDefault();
+                if (dragSrcElem.id !== li.id) {
+                    li.classList.add('dragover');
+                }
+            }
+            if (eventType === 'dragleave') {
+                if (li.classList.contains('dragover')) {
+                    li.classList.remove('dragover');
+                }
+            }
+            if (eventType === 'drop') {
+                handleDrop(evt, dragSrcElem, li);
+            }
+            if (eventType === 'dragend') {
+                dragSrcElem.classList.remove('dragstart');
+            }
+        });
+    });
 });
-var changeImgPath = function (nodes, currentMode) {
-    nodes.forEach(function (element) {
-        var elemSrcSet = getRelativePath(element, 'srcset');
-        var mediaAttrVal = element.getAttribute('media');
+const imitateDOMSwap = function (srcElem, target) {
+    const todoItems = document.querySelector('.todo-list').children;
+    const newTodoItemArr = Array.from(todoItems);
+    const srcIndex = newTodoItemArr.indexOf(srcElem);
+    const targetIndex = newTodoItemArr.indexOf(target);
+    const srcOriginObj = todoList.find((_, index) => index === srcIndex);
+    const targetOriginObj = todoList.find((_, index) => index === targetIndex);
+    todoList.splice(targetIndex, 1, srcOriginObj);
+    todoList.splice(srcIndex, 1, targetOriginObj);
+};
+function handleDrop(evt, srcElem, liElem) {
+    evt.stopPropagation();
+    srcElem.classList.remove('dragstart');
+    if (srcElem === liElem) {
+        return;
+    }
+    liElem.classList.remove('dragover');
+    const id = evt.dataTransfer.getData('text/plain');
+    const draggableElem = document.getElementById(id);
+    const dropTargetContent = liElem.innerHTML;
+    liElem.innerHTML = draggableElem.innerHTML;
+    draggableElem.innerHTML = dropTargetContent;
+    draggableElem.id = liElem.id;
+    liElem.id = id;
+    imitateDOMSwap(draggableElem, liElem);
+}
+const changeImgPath = (nodes, currentMode) => {
+    nodes.forEach((element) => {
+        const elemSrcSet = getRelativePath(element, 'srcset');
+        const mediaAttrVal = element.getAttribute('media');
         if (mediaAttrVal === '(max-width: 599px)') {
             if (currentMode === 'light') {
                 element.setAttribute('srcset', elemSrcSet + element.dataset.dark);
@@ -56,10 +108,10 @@ var changeImgPath = function (nodes, currentMode) {
         }
     });
 };
-var toggleDarkAndLightMode = function (toggler, current) {
-    var modeDiv = document.querySelector('#mode');
-    var headerBgs = document.querySelectorAll('.header-bg > picture > source');
-    var slicedPath = getRelativePath(toggler.firstElementChild, 'src');
+const toggleDarkAndLightMode = (toggler, current) => {
+    const modeDiv = document.querySelector('#mode');
+    const headerBgs = document.querySelectorAll('.header-bg > picture > source');
+    const slicedPath = getRelativePath(toggler.firstElementChild, 'src');
     if (current === 'light') {
         toggler.firstElementChild.setAttribute('src', slicedPath + toggler.dataset.light);
         modeDiv.classList.remove('light-mode');
@@ -74,8 +126,8 @@ var toggleDarkAndLightMode = function (toggler, current) {
     }
 };
 function toggleMode(e) {
-    var target = e.currentTarget;
-    var modeDiv = document.querySelector('#mode');
+    const target = e.currentTarget;
+    const modeDiv = document.querySelector('#mode');
     if (modeDiv.classList.contains('light-mode')) {
         toggleDarkAndLightMode(target, 'light');
     }
@@ -85,12 +137,12 @@ function toggleMode(e) {
 }
 function addTodo(e) {
     e.preventDefault();
-    var todoName = document.querySelector('#todo-form-input');
-    var todoChecked = document.querySelector('#todo-form-check');
+    const todoName = document.querySelector('#todo-form-input');
+    const todoChecked = document.querySelector('#todo-form-check');
     if (!todoName.value) {
         return;
     }
-    var todoItem = {
+    const todoItem = {
         id: generateRandomId(),
         name: todoName.value,
         completed: todoChecked.checked
@@ -103,10 +155,21 @@ function addTodo(e) {
     renderTodoList(todoList);
 }
 function renderTodoList(list) {
-    var output = list.map(function (item) {
-        return "\n      <li class=\"todo-item\">\n        <input type=\"checkbox\" ".concat(item.completed ? 'checked' : null, " name=\"").concat(item.name, "\" data-id=\"").concat(item.id, "\" />\n        <p style=\"text-decoration: ").concat(item.completed ? "line-through" : "none", "; color: ").concat(item.completed ? "var(--dark-theme-5)" : "", "\">").concat(item.name, "</p>\n        <button data-id=\"").concat(item.id, "\" class=\"delete-todo-btn\">&#10006;</button>\n      </li>\n    ");
+    const output = list.map((item) => {
+        return `
+      <li id="item-${item.id}" class="todo-item" draggable="true">
+        <input 
+          type="checkbox" ${item.completed ? 'checked' : ""} 
+          value="${item.name}" 
+          name="task" 
+          data-id="${item.id}" 
+        />
+        <p class="${item.completed ? "checked" : ""}">${item.name}</p>
+        <button data-id="${item.id}" class="delete-todo-btn">&#10006;</button>
+      </li>
+    `;
     });
-    var todoListElem = document.querySelector('.todo-list');
+    const todoListElem = document.querySelector('.todo-list');
     todoListElem.innerHTML = output.join("");
     if (todoList.length) {
         itemsLeftWatch(list);
@@ -114,23 +177,23 @@ function renderTodoList(list) {
     handleTaskComplete();
 }
 function deleteTodoItem(id) {
-    todoList = todoList.filter(function (item) { return item.id !== id; });
+    todoList = todoList.filter((item) => item.id !== id);
     renderTodoList(todoList);
 }
 function clearCompleted() {
-    var completedTodo = todoList.filter(function (item) { return item.completed; });
-    todoList = todoList.filter(function (item) { return !item.completed; });
+    const completedTodo = todoList.filter(item => item.completed);
+    todoList = todoList.filter((item) => !item.completed);
     if (completedTodo.length) {
         renderTodoList(todoList);
     }
 }
 function filterTodo(target, filter) {
-    var filterBtns = document.querySelectorAll('.filter-btn');
-    filterBtns.forEach(function (btn) {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach((btn) => {
         btn.classList.remove('active');
     });
     target.classList.add('active');
-    var newTodoList = todoList.filter(function (item) {
+    const newTodoList = todoList.filter(item => {
         if (filter === 'Active') {
             return !item.completed;
         }
@@ -146,23 +209,23 @@ function filterTodo(target, filter) {
     }
 }
 function handleTaskComplete() {
-    var todoItemCheckboxes = document.querySelectorAll('.todo-item input[type="checkbox"]');
-    todoItemCheckboxes.forEach(function (todoItem) {
-        todoItem.addEventListener('change', function (e) {
-            var target = e.target;
-            var todoItemText = target.nextElementSibling;
-            var id = target.dataset.id;
-            var checked = target.checked;
+    let todoItemCheckboxes = document.querySelectorAll('.todo-item input[type="checkbox"]');
+    todoItemCheckboxes.forEach((checkInput) => {
+        checkInput.addEventListener('change', function (e) {
+            const target = e.target;
+            const todoItemText = target.nextElementSibling;
+            const id = target.dataset.id;
+            const checked = target.checked;
             if (checked) {
-                todoItemText.style.textDecoration = 'line-through';
-                todoItemText.style.color = 'var(--dark-theme-5)';
+                target.setAttribute('checked', "");
             }
             else {
-                todoItemText.style.textDecoration = 'none';
+                target.removeAttribute('checked');
             }
-            todoList = todoList.map(function (item) {
+            showChecked(todoItemText, checked);
+            todoList = todoList.map(item => {
                 if (item.id === id) {
-                    return __assign(__assign({}, item), { completed: checked });
+                    return Object.assign(Object.assign({}, item), { completed: checked });
                 }
                 return item;
             });
@@ -170,17 +233,27 @@ function handleTaskComplete() {
         });
     });
 }
+function showChecked(elem, checked) {
+    if (checked) {
+        elem.classList.add('checked');
+    }
+    else {
+        elem.classList.remove('checked');
+    }
+}
 function itemsLeftWatch(list) {
-    var remainingTaskElem = document.querySelector('.todo-bottom > p');
-    var count = list.filter(function (item) { return !item.completed; }).length;
-    var remainingTaskText = "\n    ".concat(count === 0 ? 'No items' : count === 1 ? count + " item left" : count + " items left", "\n  ");
+    const remainingTaskElem = document.querySelector('.todo-bottom > p');
+    const count = list.filter(item => !item.completed).length;
+    const remainingTaskText = `
+    ${count === 0 ? 'No items' : count === 1 ? count + " item left" : count + " items left"}
+  `;
     remainingTaskElem.innerHTML = remainingTaskText;
 }
 function generateRandomId() {
     return Date.now().toString(20) + Math.random().toString(20).substring(2);
 }
 function getRelativePath(selector, attribute) {
-    var originalPath = selector.getAttribute(attribute);
+    const originalPath = selector.getAttribute(attribute);
     return originalPath.slice(0, originalPath.lastIndexOf('/') + 1);
 }
 //# sourceMappingURL=app.js.map

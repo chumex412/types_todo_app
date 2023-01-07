@@ -10,6 +10,7 @@ type TodoObject = {
 }
 type TodoArray = TodoObject[];
 type Mode = 'light' | 'dark';
+type EventType = 'dragstart' | 'dragenter' | 'dragleave' | 'dragover' | 'drop' | 'dragend';
 
 let todoList: TodoArray = []
 
@@ -20,10 +21,13 @@ document.addEventListener("DOMContentLoaded", function(): void {
   const todoListElem = document.querySelector('.todo-list') as HTMLElement;
   const clearCompletedBtn = document.querySelector('.clear-completed') as HTMLButtonElement;
   const modeToggleBtn = document.querySelector('.mode-toggler') as HTMLButtonElement;
+  let dragSrcElem: HTMLUListElement;
   
   // Events
-  todoForm.addEventListener('submit', addTodo)
-  clearCompletedBtn.addEventListener('click', clearCompleted)
+  const eventTypeArr: EventType[] = ['dragstart', 'dragenter' , 'dragleave' , 'dragover' , 'drop' , 'dragend']
+
+  todoForm.addEventListener('submit', addTodo);
+  clearCompletedBtn.addEventListener('click', clearCompleted);
   todoListElem.addEventListener('click', function(e: Event): void {
     const target = <HTMLElement>e.target;
 
@@ -32,9 +36,9 @@ document.addEventListener("DOMContentLoaded", function(): void {
 
       deleteTodoItem(id)
     }
-  })
+  });
   
-  modeToggleBtn.addEventListener('click', toggleMode)
+  modeToggleBtn.addEventListener('click', toggleMode);
   mainWrapper.addEventListener('click', function(e: Event): void {
     const target = <HTMLButtonElement> e.target;
 
@@ -43,11 +47,97 @@ document.addEventListener("DOMContentLoaded", function(): void {
 
       filterTodo(target, name)
     }
-  })
-})
+  });
+
+  // Drag and drop
+  eventTypeArr.forEach(eventType => {
+    todoListElem.addEventListener(eventType, function (evt: DragEvent): void {
+      const target = <HTMLElement> evt.target;
+      const li = <HTMLUListElement> target.closest('.todo-item');
+
+      if(!li) return;
+
+      if(!todoListElem.contains(li)) return;
+        
+      if(eventType === 'dragstart') {
+        
+        dragSrcElem = li
+        
+        evt.dataTransfer.effectAllowed = 'move';
+        evt.dataTransfer.setData('text/plain', li.id)
+        setTimeout((): void => {
+          li.classList.add('dragstart')
+        }, 0)
+      }
+
+      if(eventType === 'dragenter' || eventType === 'dragover') {
+        evt.preventDefault();
+        
+        if(dragSrcElem.id !== li.id) {
+          li.classList.add('dragover');
+        }
+      }
+
+      if(eventType === 'dragleave') {
+        if(li.classList.contains('dragover')) {
+          li.classList.remove('dragover')
+        }
+      }
+
+      if(eventType === 'drop') {
+        handleDrop(evt, dragSrcElem, li)
+      }
+
+      if(eventType === 'dragend') {
+        dragSrcElem.classList.remove('dragstart');
+      }
+    });
+  });
+});
+
+const imitateDOMSwap = function(srcElem: HTMLUListElement, target: HTMLUListElement): void {
+  const todoItems = <HTMLCollection> document.querySelector('.todo-list').children;
+  const newTodoItemArr: Element[] = Array.from(todoItems);
+
+  const srcIndex: number = newTodoItemArr.indexOf(srcElem);
+  const targetIndex: number = newTodoItemArr.indexOf(target);
+  
+  const srcOriginObj: TodoObject = todoList.find((_, index: number) => index === srcIndex);
+  const targetOriginObj: TodoObject = todoList.find((_, index: number) => index === targetIndex);
+
+  todoList.splice(targetIndex, 1, srcOriginObj);
+  todoList.splice(srcIndex, 1, targetOriginObj);
+}
+
+function handleDrop(evt: DragEvent, srcElem: HTMLUListElement, liElem: HTMLUListElement): void {
+    evt.stopPropagation();
+    srcElem.classList.remove('dragstart');
+
+    if(srcElem === liElem) {
+      return;
+    }
+
+    liElem.classList.remove('dragover');
+
+    const id: string = evt.dataTransfer.getData('text/plain');
+
+    const draggableElem = <HTMLUListElement> document.getElementById(id);
+    const dropTargetContent: string = liElem.innerHTML;
+
+    // Swaps content
+    liElem.innerHTML = draggableElem.innerHTML;
+    draggableElem.innerHTML = dropTargetContent;
+
+    // Swaps id
+    draggableElem.id = liElem.id;
+    liElem.id = id;
+
+    imitateDOMSwap(draggableElem, liElem)
+}
 
 // Toggles light and dark mode
 
+// Changes the header background images based on the mode
 const changeImgPath = (nodes: NodeList, currentMode: Mode): void => {
   
   nodes.forEach((element: HTMLElement) => {
@@ -135,13 +225,19 @@ function addTodo(e: Event): void {
   renderTodoList(todoList)
 }
 
+// Renders todo items on the DOM
 function renderTodoList(list: TodoArray): void {
   const output: string[] = list.map((item: TodoObject) => {
 
     return `
-      <li class="todo-item">
-        <input type="checkbox" ${item.completed ? 'checked': null} name="${item.name}" data-id="${item.id}" />
-        <p style="text-decoration: ${item.completed ? "line-through" : "none"}; color: ${item.completed ? "var(--dark-theme-5)" : ""}">${item.name}</p>
+      <li id="item-${item.id}" class="todo-item" draggable="true">
+        <input 
+          type="checkbox" ${item.completed ? 'checked': ""} 
+          value="${item.name}" 
+          name="task" 
+          data-id="${item.id}" 
+        />
+        <p class="${item.completed ? "checked" : ""}">${item.name}</p>
         <button data-id="${item.id}" class="delete-todo-btn">&#10006;</button>
       </li>
     `
@@ -198,11 +294,12 @@ function filterTodo(target: HTMLButtonElement, filter: string): void {
   }
 }
 
+// Updates completed task in the todo array and on the DOM
 function handleTaskComplete (): void {
   let todoItemCheckboxes = <NodeList> document.querySelectorAll('.todo-item input[type="checkbox"]');
 
-  todoItemCheckboxes.forEach((todoItem) => {
-    todoItem.addEventListener('change', function(e: Event): void {
+  todoItemCheckboxes.forEach((checkInput) => {
+    checkInput.addEventListener('change', function(e: Event): void {
       const target = <HTMLInputElement> e.target;
       const todoItemText = <HTMLParagraphElement> target.nextElementSibling;
 
@@ -210,11 +307,12 @@ function handleTaskComplete (): void {
       const checked: boolean = target.checked
 
       if(checked) {
-        todoItemText.style.textDecoration = 'line-through';
-        todoItemText.style.color = 'var(--dark-theme-5)';
+        target.setAttribute('checked', "");
       } else {
-        todoItemText.style.textDecoration = 'none';
+        target.removeAttribute('checked');
       }
+
+      showChecked(todoItemText, checked)
 
       todoList = todoList.map(item => {
         if(item.id === id) {
@@ -229,6 +327,15 @@ function handleTaskComplete (): void {
   })
 }
 
+function showChecked(elem: HTMLElement | Element, checked: boolean): void {
+  if(checked) {
+    elem.classList.add('checked');
+  } else {
+    elem.classList.remove('checked');
+  }
+}
+
+// Watches for changes in the items not marked as completed
 function itemsLeftWatch(list: TodoArray): void {
   const remainingTaskElem = <HTMLParagraphElement> document.querySelector('.todo-bottom > p');
 
